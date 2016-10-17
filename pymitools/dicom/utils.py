@@ -34,7 +34,7 @@ def get_slice_spacing_from_series(dicom_stack, mode="median"):
         return spacings[0]
 def get_slice_spacing(dicom_stack):
     try:
-        return float(dicom_stack[0x0018,0x0088].value)
+        return float(dicom_stack[0][0x0018,0x0088].value)
     except KeyError:
         return get_slice_spacing_from_series(dicom_stack)
 

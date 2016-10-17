@@ -1,8 +1,10 @@
 from matplotlib.patches import Circle
 from collections import OrderedDict, defaultdict
 from scipy.ndimage import zoom
+import gzip
+import pickle
 
-class annoImage(object):
+class annoImageMIP(object):
     _anatomy = {0:"jaw",
                1:"spine",
            2:"clavical head",
@@ -14,10 +16,10 @@ class annoImage(object):
             "mandibular joint":"pink"}
     def __init__(self, ax, vol, meta, anatomy='jaw'):
         self.ax = ax
-        self.vol = vol
+        self.mips = {"axial":vol.max(axis=0), "coronal":vol.max(axis=2), "sagittal":vol.max(axis=1)}
         self.meta = meta
         self.anatomy = anatomy
-        self.scale_ = meta["SliceThickness"]/meta["PixelSpacingX"]
+        self.scale_ = meta["SliceThickness"]/meta["PixelSpacing"][0]
         self.circles = defaultdict(OrderedDict)
         self.canvas = ax.figure.canvas
         self.cidrelease =             ax.figure.canvas.mpl_connect('button_release_event', self.button_release_callback)
@@ -69,9 +71,11 @@ class annoImage(object):
         self.ax.imshow(zoom(self.vol.max(axis=1),(self.scale_, 1.0))[::-1,:], cmap='gray')
         self.ax.figure.canvas.draw()
 
+    def save_annotation(self, fname):
+        with gzip.open(fname,"wb") as f0:
+            pickle.dump((self._anatomy, self.color, self.circles), f0)
 
     def button_release_callback(self, event):
-        print("in callback")
         if event.inaxes!=self.ax:
             return
         circ = Circle((event.xdata, event.ydata), radius=5,
