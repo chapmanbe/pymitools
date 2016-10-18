@@ -31,9 +31,9 @@ class annoImageMIP(object):
         if self.display_mode == 0:
             return (event.xdata, event.ydata, -1)
         elif self.display_mode == 1:
-            return (event.xdata, -1, self.vol.shape[0]-event.ydata/self.scale_)
+            return (event.xdata, -1, self.mips["sagittal"].shape[0]-event.ydata/self.scale_)
         elif self.display_mode == 2:
-            return (-1, event.xdata, self.vol.shape[0]-event.ydata/self.scale_)
+            return (-1, event.xdata, self.mips["coronal"].shape[0]-event.ydata/self.scale_)
 
     def save_patches(self):
         if self.display_mode:
@@ -56,19 +56,19 @@ class annoImageMIP(object):
         self.save_patches()
         self.display_mode = 0
         self.ax.patches = self.patches[self.display_mode]
-        self.ax.imshow(self.vol.max(axis=0), cmap='gray')
+        self.ax.imshow(self.mips["axial"], cmap='gray')
         self.ax.figure.canvas.draw()
     def display_coronal(self):
         self.save_patches()
         self.display_mode = 2
         self.ax.patches = self.patches[self.display_mode]
-        self.ax.imshow(zoom(self.vol.max(axis=2),(self.scale_, 1.0))[::-1,:], cmap='gray')
+        self.ax.imshow(zoom(self.mips["coronal"],(self.scale_, 1.0))[::-1,:], cmap='gray')
         self.ax.figure.canvas.draw()
     def display_sagittal(self):
         self.save_patches()
         self.display_mode = 1
         self.ax.patches = self.patches[self.display_mode]
-        self.ax.imshow(zoom(self.vol.max(axis=1),(self.scale_, 1.0))[::-1,:], cmap='gray')
+        self.ax.imshow(zoom(self.mips["sagittal"],(self.scale_, 1.0))[::-1,:], cmap='gray')
         self.ax.figure.canvas.draw()
 
     def save_annotation(self, fname):

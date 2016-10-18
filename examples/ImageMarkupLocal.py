@@ -20,13 +20,13 @@ def main():
     print(meta)
 
     fig1, ax1 = plt.subplots(1)
-    a1 = ampl.annoImage(ax1, vol, meta)
+    a1 = ampl.annoImageMIP(ax1, vol, meta)
 
-    return a1, fig1
+    return a1, fig1, vol
 
 
 if __name__ == '__main__':
-    ai, fig = main()
+    ai, fig, vol = main()
     ai.display_coronal()
     ai.set_anatomy(0)
     ai.display_sagittal()
