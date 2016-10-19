@@ -26,6 +26,11 @@ def main():
 
 
 if __name__ == '__main__':
+
+    anatomy = {"mandible angular process":"http://purl.obolibrary.org/obo/UBERON_0006959",
+               "clavicle bone":"http://purl.obolibrary.org/obo/UBERON_0001105",
+               "process of vertebra":"http://purl.obolibrary.org/obo/UBERON_0006061",
+               "temporomandibular joint":"http://purl.obolibrary.org/obo/UBERON_0003700"}
     ai, fig, vol = main()
     ai.display_coronal()
     ai.set_anatomy(0)
