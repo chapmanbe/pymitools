@@ -13,7 +13,7 @@ import dicom
 import girder_client
 from io import BytesIO
 import numpy as np
-
+import os
 
 class GirderProcessor:
     def __init__(self, api_url, username, password,
@@ -98,24 +98,24 @@ class GirderProcessor:
         return [self.read_dicom(dfile) for dfile in dfiles]
 
 
-def get_case_dates(caseID):
-    _, dates = gp.query_folder(folder_id=caseID)
-    return dates
-def get_date_exams(dateID):
-    _, exams = gp.query_folder(folder_id=dateID)
-    return exams
-def get_exam_series(examID):
-    series, _ = gp.query_folder(folder_id=examID)
-    return series
+    def get_case_dates(self, caseID):
+        _, dates = self.get_items_folders(caseID)
+        return dates
+    def get_date_exams(self, dateID):
+        _, exams = self.get_items_folders(dateID)
+        return exams
+    def get_exam_series(self, examID):
+        series, _ = self.get_items_folders(examID)
+        return series
 
 
-def get_case_series(caseID):
-    case_series = {}
-    for d, did in get_case_dates(caseID).items():
-        for e, eid in get_date_exams(did).items():
-            for s, sid in get_exam_series(eid).items():
-                case_series[os.path.join(d,e,s)] = sid
-    return case_series
+    def get_case_series(self, caseID):
+        case_series = {}
+        for d, did in self.get_case_dates(caseID).items():
+            for e, eid in self.get_date_exams(did).items():
+                for s, sid in self.get_exam_series(eid).items():
+                    case_series[os.path.join(d,e,s)] = sid
+        return case_series
 
 def get_vol_image_from_stack(dd):
     dd.sort(key=lambda x: int(x.InstanceNumber))
