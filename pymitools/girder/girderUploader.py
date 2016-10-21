@@ -34,8 +34,10 @@ class GirderUploader(object):
         self._client.add_folder_upload_callback(self.__upload_folder_callback)
         self._client.add_item_upload_callback(self.__upload_item_callback)
 
-
-    def upload_file_with_metadata(self, girder_dest_path, local_path, metadata):
+    def upload_file_to_folder(self, to_upload, metadata, fileId):
+        self._metadata = metadata
+        self._client.upload(to_upload, fileId, parent_tpe='folder')
+    def upload_file_with_metadata(self, local_path, metadata, girder_dest_id=None, girder_dest_path=None):
         """Upload folder to girder with associated metadata.
 
         :param girder_dest_path: Unix style path to destination on girder.
