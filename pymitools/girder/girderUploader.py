@@ -7,10 +7,9 @@ or a folder to girder.
 
 import girder_client
 import os
-from bioportalSearchWidgets import BioportalSearchWidgets
 
 
-class GirderUploader:
+class GirderUploader(object):
     """Use girder client to upload files to girder.
 
     Option to request metadata from the user before upload,
@@ -28,12 +27,10 @@ class GirderUploader:
         """
         self._client = girder_client.GirderClient(apiUrl=girder_api_url)
         self._client.authenticate(username, password)
-        self._bio_search = BioportalSearchWidgets(self.__submit_callback)
         self._metadata = dict()
         self._local_path = None
         self._isfolder = False
         self._girder_dest_path = None
-        self._request_metadata = False
         self._client.add_folder_upload_callback(self.__upload_folder_callback)
         self._client.add_item_upload_callback(self.__upload_item_callback)
 
@@ -66,11 +63,8 @@ class GirderUploader:
         self._local_path = local_path
         self._isfolder = True
         self._girder_dest_path = girder_dest_path
-        if self._request_metadata:
-            self._bio_search.display_widgets()
-        else:
-            parentId, parentType = self.__get_parent_id_and_type()
-            self.__upload(self._local_path, parentId, parent_type=parentType)
+        parentId, parentType = self.__get_parent_id_and_type()
+        self.__upload(self._local_path, parentId, parent_type=parentType)
 
     def upload_file(self, girder_dest_path, local_path):
         """Begin the upload process.
@@ -85,31 +79,9 @@ class GirderUploader:
         self._local_path = local_path
         self._isfolder = False
         self._girder_dest_path = girder_dest_path
-        if self._request_metadata:
-            self._bio_search.display_widgets()
-        else:
-            parentId, parentType = self.__get_parent_id_and_type()
-            self.__upload(self._local_path, parentId, parentType)
+        parentId, parentType = self.__get_parent_id_and_type()
+        self.__upload(self._local_path, parentId, parentType)
 
-    def request_metadata(self, topic, ontologies, require=False):
-        """Create field to request metadata from the user.
-
-        Create metadata request form. The form is displayed when the
-        upload for the file/folder begins. e,g, upload_folder()
-
-        Prior to uploading the file/folder to girder, metadata may be
-        requested from the user. Given the provided ontology, the user
-        searches the ontologies for keywords.
-
-        :param topic:       Topic of the metadata, what it's requested to
-                            describe (e.i., region, disease).
-        :param ontologies:  List of ontology IDs to be searched.
-        :param require:     Whethere or not to require this metadata to be
-                            filled before upload.
-
-        """
-        self._request_metadata = True
-        self._bio_search.add_search_widget(topic, ontologies, require)
 
     def __upload(self, local_path, parent_id, parent_type):
         if self._isfolder:
