@@ -31,8 +31,8 @@ class GirderUploader(object):
         self._local_path = None
         self._isfolder = False
         self._girder_dest_path = None
-        self._client.add_folder_upload_callback(self.__upload_folder_callback)
-        self._client.add_item_upload_callback(self.__upload_item_callback)
+        self._client.addFolderUploadCallback(self.__upload_folder_callback)
+        self._client.addItemUploadCallback(self.__upload_item_callback)
 
     def upload_file_to_folder(self, to_upload, metadata, fileId):
         self._metadata = metadata
