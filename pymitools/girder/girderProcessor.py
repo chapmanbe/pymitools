@@ -117,6 +117,40 @@ class GirderProcessor:
                     case_series[os.path.join(d,e,s)] = sid
         return case_series
 
+    def find_matching_item_by_name(self, current_case, name_to_match):
+        """
+
+        Searches the content of a directory (case) and returns the first item in 
+        the folder matching provided pattern
+
+        Arguments:
+
+        current_case: girder ID for case/folder
+        name_to_match: a string containing the pattern to match in the item names
+
+
+        If match is successful, function returns the matched item dictionary.
+        Else None is returned
+
+        """
+        current_items = self.get_case_series(current_case)
+        for key in current_items.keys():
+            if name_to_match in key:
+                return current_items[key] 
+        else:
+            return None
+
+    def get_item_fileID(self, itemID, fnum=0, mimeType='application/json'):
+        """
+        Returns the fileID for the fnum-th file of matching mimeType for an itemID
+
+        Arguments:
+
+
+        """
+        return [f['_id'] for f in self._client.listFile(itemID) if f["mimeType"]==mimeType][fnum]
+
+
 def get_vol_image_from_stack(dd):
     dd.sort(key=lambda x: int(x.InstanceNumber))
     vol = np.dstack([d.pixel_array for d in dd]).transpose()

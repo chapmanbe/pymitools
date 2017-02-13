@@ -65,11 +65,11 @@ class annoImageMIP(object):
         """
         print("in get_img_crds")
         if self.display_mode == "axial":
-            return (event.xdata, event.ydata, -1)
+            return (round(event.xdata), round(event.ydata), -1)
         elif self.display_mode == "sagittal":
-            return (event.xdata, -1, self.mips["sagittal"].shape[0]-event.ydata/self.scale_)
+            return (round(event.xdata), -1, round(self.mips["sagittal"].shape[0]-event.ydata/self.scale_))
         elif self.display_mode == "coronal":
-            return (-1, event.xdata, self.mips["coronal"].shape[0]-event.ydata/self.scale_)
+            return (-1, round(event.xdata), round(self.mips["coronal"].shape[0]-event.ydata/self.scale_))
 
     def save_patches(self):
         if self.display_mode:
@@ -123,13 +123,12 @@ class annoImageMIP(object):
 
 
     def button_release_callback(self, event):
-        print("in button_release_callback")
         if event.inaxes!=self.ax:
-            print("axes mismatch")
             return
         circ = Circle((event.xdata, event.ydata), radius=5,
-                    color = self.clrs.get(self._anatomy[self.anatomy],(1,1,0)), alpha=0.3)
-        self.annotations[self.anatomy][circ] = self.get_img_crds(event)
+                color=self.colors.get(self.current_anatomy, (1,1,0)), 
+                      alpha=0.3)
+        self.annotations[self.current_anatomy][circ] = self.get_img_crds(event)
         self.ax.add_patch(circ)
         self.ax.figure.canvas.draw()
 
@@ -139,7 +138,7 @@ class annoImageMIP(object):
         if event.key == 'd':
             circ = self.ax.patches.pop()
             if circ:
-                del self.annotations[self.anatomy][circ]
+                del self.annotations[self.current_anatomy][circ]
 
         self.ax.figure.canvas.draw()
 

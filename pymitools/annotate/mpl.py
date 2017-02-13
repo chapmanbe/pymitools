@@ -76,10 +76,11 @@ class annoImageMIP(object):
             pickle.dump((self._anatomy, self.color, self.circles), f0)
 
     def button_release_callback(self, event):
+        print("in button_release_callback")
         if event.inaxes!=self.ax:
             return
         circ = Circle((event.xdata, event.ydata), radius=5,
-                    color = self.clrs.get(self._anatomy[self.anatomy],(1,1,0)), alpha=0.3)
+                    color = self.clrs.get(self._anatomy[self.anatomy],(1,1,0)), alpha=0.9)
         self.circles[self.anatomy][circ] = self.get_img_crds(event)
         self.ax.add_patch(circ)
         self.ax.figure.canvas.draw()
