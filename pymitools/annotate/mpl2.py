@@ -1,8 +1,11 @@
 from matplotlib.patches import Circle
-from collections import OrderedDict, defaultdict
+from collections import OrderedDict, defaultdict, namedtuple
 from scipy.ndimage import zoom
 import gzip
 import pickle
+
+icrd = namedtuple("icrd", ["i", "j", "k"])
+wcrd = namedtuple("wcrd", ["x", "y", "z"])
 
 def onclick(event):
     print('button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
@@ -65,11 +68,11 @@ class annoImageMIP(object):
         """
         print("in get_img_crds")
         if self.display_mode == "axial":
-            return (round(event.xdata), round(event.ydata), -1)
+            return (round(event.xdata), round(event.ydata), None)
         elif self.display_mode == "sagittal":
-            return (round(event.xdata), -1, round(self.mips["sagittal"].shape[0]-event.ydata/self.scale_))
+            return (round(event.xdata), None, round(self.mips["sagittal"].shape[0]-event.ydata/self.scale_))
         elif self.display_mode == "coronal":
-            return (-1, round(event.xdata), round(self.mips["coronal"].shape[0]-event.ydata/self.scale_))
+            return (None, round(event.xdata), round(self.mips["coronal"].shape[0]-event.ydata/self.scale_))
 
     def save_patches(self):
         if self.display_mode:
@@ -116,9 +119,14 @@ class annoImageMIP(object):
         location and the pixel (i,j,k) coordinates of the annotation
         """
         annotations = []
-        for anatomy, values in self.annotations.items():
+        for antmy, values in self.annotations.items():
             for circ, crd in values.items():
-                annotations.append({"anatomy":anatomy, "i":crd[0], "j":crd[1], "k":crd[2]})
+                annotations.append({"anatomy":antmy, 
+                                    "coordinate":crd, 
+                                    "purl":self.anatomy[antmy],
+                                    "scale_x":1.0,
+                                    "scale_y":1.0,
+                                    "scale_z":self.scale_})
         return annotations
 
 
@@ -128,7 +136,7 @@ class annoImageMIP(object):
         circ = Circle((event.xdata, event.ydata), radius=5,
                 color=self.colors.get(self.current_anatomy, (1,1,0)), 
                       alpha=0.3)
-        self.annotations[self.current_anatomy][circ] = self.get_img_crds(event)
+        self.annotations[self.current_anatomy][circ] = icrd(*self.get_img_crds(event))
         self.ax.add_patch(circ)
         self.ax.figure.canvas.draw()
 

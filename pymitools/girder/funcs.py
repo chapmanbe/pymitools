@@ -53,22 +53,36 @@ def download_sitk_file(gp, itemID=None, fnum=0):
     return img
 def upload_sitk_file(gp, img, name, folderID):
     
-    suffix = os.path.splitext(name)[1]
-    osh, fname = tempfile.mkstemp(suffix=suffix)
-    img = io.WriteImage(img, fname)
-    with open(fname,'rb') as f0:
-        gp._client.uploadFile(folderID, f0, name, os.path.getsize(fname), parentType='folder')
+    #suffix = os.path.splitext(name)[1]
+    #osh, fname = tempfile.mkstemp(suffix=suffix)
+    #img = io.WriteImage(img, fname)
+    #with open(fname,'rb') as f0:
+    #    gp._client.uploadFile(folderID, f0, name, os.path.getsize(fname), parentType='folder')
 
-    os.remove(fname)
+    #os.remove(fname)
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        fname = os.path.join(tmpdir, name)
+        img = sitk.WriteImage(img, fname)
+        with open(fname,'rb') as f0:
+            gp._client.uploadFile(folderID, 
+                    f0, name, 
+                    os.path.getsize(fname), 
+                    parentType='folder')
+
+
 def upload_img_file(gp, img, name, folderID):
     
-    suffix = os.path.splitext(name)[1]
-    osh, fname = tempfile.mkstemp(suffix=suffix)
-    img = io.imsave(fname, img)
-    with open(fname,'rb') as f0:
-        gp._client.uploadFile(folderID, f0, name, os.path.getsize(fname), parentType='folder')
 
-    os.remove(fname)
+    with tempfile.TemporaryDirectory() as tmpdir:
+        fname = os.path.join(tmpdir, name)
+        img = io.imsave(fname, img)
+        with open(fname,'rb') as f0:
+            gp._client.uploadFile(folderID, 
+                    f0, name, 
+                    os.path.getsize(fname), 
+                    parentType='folder')
+
 def get_gp(folder, url, username, password):
 
 

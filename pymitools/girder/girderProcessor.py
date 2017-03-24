@@ -84,6 +84,18 @@ class GirderProcessor:
         return dfiles
         return [self.read_dicom(dfile) for dfile in dfiles]
 
+    def get_dicom_folder_series_files(self, itemID):
+        """
+        Download and extract pixel data from dicom image file.
+
+        Scan through the file at the already given file path and store pixel
+        information for each dicom image slice. Processed images can be
+        accessed via get_image method.
+
+        """
+        dfiles = [f for f in self._client.listFile(itemID) if f['mimeType'] == 'application/dicom']
+        return dfiles
+        return [self.read_dicom(dfile) for dfile in dfiles]
 
     def get_dicom_series(self, itemID):
         """
