@@ -65,7 +65,7 @@ def upload_sitk_file(gp, img, name, folderID):
         fname = os.path.join(tmpdir, name)
         img = sitk.WriteImage(img, fname)
         with open(fname,'rb') as f0:
-            gp._client.uploadFile(folderID, 
+            fid = gp._client.uploadFile(folderID, 
                     f0, name, 
                     os.path.getsize(fname), 
                     parentType='folder')
@@ -78,10 +78,11 @@ def upload_img_file(gp, img, name, folderID):
         fname = os.path.join(tmpdir, name)
         img = io.imsave(fname, img)
         with open(fname,'rb') as f0:
-            gp._client.uploadFile(folderID, 
+           fid = gp._client.uploadFile(folderID, 
                     f0, name, 
                     os.path.getsize(fname), 
                     parentType='folder')
+    return fid
 
 def get_gp(folder, url, username, password):
 
