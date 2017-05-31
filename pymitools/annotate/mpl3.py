@@ -63,13 +63,13 @@ class annoImageMIP(object):
 
         Conversion is determined by the current display_mode
         """
-        print("in get_img_crds")
+        print("in get_img_crds: x=%f,y=%f"%(event.xdata, event.ydata))
         if self.display_mode == "axial":
             return (round(event.xdata), round(event.ydata), None)
         elif self.display_mode == "sagittal":
-            return (round(event.xdata), None, round(self.mips["sagittal"].shape[0]-event.ydata/self.scale_))
+            return (round(event.xdata), None, event.ydata)#round(self.mips["sagittal"].shape[0]-event.ydata/self.scale_))
         elif self.display_mode == "coronal":
-            return (None, round(event.xdata), round(self.mips["coronal"].shape[0]-event.ydata/self.scale_))
+            return (None, round(event.xdata), event.ydata)#round(self.mips["coronal"].shape[0]-event.ydata/self.scale_))
 
     def save_patches(self):
         if self.display_mode:
